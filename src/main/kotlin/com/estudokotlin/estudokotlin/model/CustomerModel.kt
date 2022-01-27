@@ -1,8 +1,18 @@
 package com.estudokotlin.estudokotlin.model
 
-class CustomerModel(
-        var id: String? = null,
+import javax.persistence.*
+
+@Entity(name = "customer")
+data class CustomerModel(
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        var id: Int? = null,
+
+        @Column
         var name: String,
+
+        @Column
         var email: String
 
 )

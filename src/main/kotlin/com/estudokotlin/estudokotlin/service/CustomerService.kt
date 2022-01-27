@@ -1,47 +1,43 @@
 package com.estudokotlin.estudokotlin.service
 
 import com.estudokotlin.estudokotlin.model.CustomerModel
+import com.estudokotlin.estudokotlin.repository.CustomerRepository
 import org.springframework.stereotype.Service
 
 @Service
-class CustomerService {
+class CustomerService (
+        val customerRepository: CustomerRepository
+){
 
     val customers = mutableListOf<CustomerModel>()
 
     fun getAll(name: String?): List<CustomerModel> {
         name?.let {
-            return customers.filter { it.name.contains(name, ignoreCase = true) }
+            return customerRepository.findByNameContaining(it)
         }
-        return customers
+        return customerRepository.findAll().toList()
     }
 
     fun create(customer: CustomerModel) {
-
-        var id = if(this.customers.isEmpty()) {
-            1
-        }else{
-            this.customers.last().id!!.toInt() + 1
-        }.toString()
-
-        customer.id = id
-
-        this.customers.add(CustomerModel(id, customer.name, customer.email))
-        println(customer)
+        customerRepository.save(customer)
     }
 
-    fun getCustomer(id: String) :CustomerModel {
-        return customers.filter { it.id == id }.first()
+    fun getById(id: Int) :CustomerModel {
+        return customerRepository.findById(id).get()
     }
 
     fun update(customer : CustomerModel) {
-        customers.filter { it.id == customer.id }.first().let {
-            it.name = customer.name
-            it.email = customer.email
+        if(!customerRepository.existsById(customer.id!!)) {
+            throw Exception()
         }
+        customerRepository.save(customer)
     }
 
-    fun delete(id: String) {
-        customers.removeIf { it.id == id }
+    fun delete(id: Int) {
+        if(!customerRepository.existsById(id!!)) {
+            throw Exception()
+        }
+        customerRepository.deleteById(id)
     }
 
 }
