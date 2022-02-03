@@ -1,5 +1,6 @@
 package com.estudokotlin.estudokotlin.model
 
+import com.estudokotlin.estudokotlin.enums.CustomerStatus
 import javax.persistence.*
 
 @Entity(name = "customer")
@@ -13,6 +14,10 @@ data class CustomerModel(
         var name: String,
 
         @Column
-        var email: String
+        var email: String,
+
+        @Column
+        @Enumerated(EnumType.STRING)
+        var status: CustomerStatus
 
 )

@@ -1,12 +1,14 @@
 package com.estudokotlin.estudokotlin.service
 
+import com.estudokotlin.estudokotlin.enums.CustomerStatus
 import com.estudokotlin.estudokotlin.model.CustomerModel
 import com.estudokotlin.estudokotlin.repository.CustomerRepository
 import org.springframework.stereotype.Service
 
 @Service
 class CustomerService (
-        val customerRepository: CustomerRepository
+        val customerRepository: CustomerRepository,
+        val bookService: BookService
 ){
 
     val customers = mutableListOf<CustomerModel>()
@@ -22,7 +24,7 @@ class CustomerService (
         customerRepository.save(customer)
     }
 
-    fun getById(id: Int) :CustomerModel {
+    fun findById(id: Int) :CustomerModel {
         return customerRepository.findById(id).get()
     }
 
@@ -34,10 +36,11 @@ class CustomerService (
     }
 
     fun delete(id: Int) {
-        if(!customerRepository.existsById(id!!)) {
-            throw Exception()
-        }
-        customerRepository.deleteById(id)
+        val customer = findById(id)
+        bookService.deleteByCustomer(customer)
+
+        customer.status = CustomerStatus.ATIVO
+        customerRepository.save(customer)
     }
 
 }
