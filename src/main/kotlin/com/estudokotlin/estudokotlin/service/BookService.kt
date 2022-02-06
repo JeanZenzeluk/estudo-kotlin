@@ -1,6 +1,8 @@
 package com.estudokotlin.estudokotlin.service
 
 import com.estudokotlin.estudokotlin.enums.BookStatus
+import com.estudokotlin.estudokotlin.enums.Errors
+import com.estudokotlin.estudokotlin.exception.NotFoundException
 import com.estudokotlin.estudokotlin.model.BookModel
 import com.estudokotlin.estudokotlin.model.CustomerModel
 import com.estudokotlin.estudokotlin.repository.BookRepository
@@ -25,7 +27,7 @@ class BookService(
     }
 
     fun findById(id: Int): BookModel {
-        return bookRepository.findById(id).get() // .orElseThrow()
+        return bookRepository.findById(id).orElseThrow{ NotFoundException(Errors.ML101.message.format(id), Errors.ML101.code) }
     }
 
     fun delete(id: Int) {

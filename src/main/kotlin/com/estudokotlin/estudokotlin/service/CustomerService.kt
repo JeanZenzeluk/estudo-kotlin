@@ -1,6 +1,8 @@
 package com.estudokotlin.estudokotlin.service
 
 import com.estudokotlin.estudokotlin.enums.CustomerStatus
+import com.estudokotlin.estudokotlin.enums.Errors
+import com.estudokotlin.estudokotlin.exception.NotFoundException
 import com.estudokotlin.estudokotlin.model.CustomerModel
 import com.estudokotlin.estudokotlin.repository.CustomerRepository
 import org.springframework.stereotype.Service
@@ -25,7 +27,7 @@ class CustomerService (
     }
 
     fun findById(id: Int) :CustomerModel {
-        return customerRepository.findById(id).get()
+        return customerRepository.findById(id).orElseThrow{ NotFoundException(Errors.ML201.message.format(id), Errors.ML201.code) }
     }
 
     fun update(customer : CustomerModel) {
