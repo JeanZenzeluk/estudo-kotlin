@@ -2,15 +2,18 @@ package com.estudokotlin.estudokotlin.service
 
 import com.estudokotlin.estudokotlin.enums.CustomerStatus
 import com.estudokotlin.estudokotlin.enums.Errors
+import com.estudokotlin.estudokotlin.enums.Role
 import com.estudokotlin.estudokotlin.exception.NotFoundException
 import com.estudokotlin.estudokotlin.model.CustomerModel
 import com.estudokotlin.estudokotlin.repository.CustomerRepository
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
 class CustomerService (
-        val customerRepository: CustomerRepository,
-        val bookService: BookService
+        private val customerRepository: CustomerRepository,
+        private val bookService: BookService,
+        private val bCrypt: BCryptPasswordEncoder
 ){
 
     val customers = mutableListOf<CustomerModel>()
@@ -23,6 +26,10 @@ class CustomerService (
     }
 
     fun create(customer: CustomerModel) {
+        val customerCopy = customer.copy(
+                roles = setOf(Role.CUSTOMER),
+                password = bCrypt.encode(customer.password)
+        )
         customerRepository.save(customer)
     }
 

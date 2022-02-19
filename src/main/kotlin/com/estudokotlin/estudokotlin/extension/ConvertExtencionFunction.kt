@@ -12,11 +12,13 @@ import com.estudokotlin.estudokotlin.model.BookModel
 import com.estudokotlin.estudokotlin.model.CustomerModel
 
 fun PostCustomerRequest.toCustomerModel(): CustomerModel {
-    return com.estudokotlin.estudokotlin.model.CustomerModel(name = this.name, email = this.email, status = CustomerStatus.ATIVO)
+    return com.estudokotlin.estudokotlin.model.CustomerModel(name = this.name, email = this.email,
+            status = CustomerStatus.ATIVO, password = this.password)
 }
 
 fun PutCustomerRequest.toCustomerModel(previousValue:CustomerModel): CustomerModel {
-    return com.estudokotlin.estudokotlin.model.CustomerModel(id = previousValue.id, name = this.name, email = this.email, status = previousValue.status)
+    return com.estudokotlin.estudokotlin.model.CustomerModel(id = previousValue.id, name = this.name,
+            email = this.email, status = previousValue.status, password = previousValue.password)
 }
 
 fun String.primeiraLetra(): Char {
