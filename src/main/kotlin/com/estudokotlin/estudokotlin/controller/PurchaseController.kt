@@ -6,8 +6,8 @@ import com.estudokotlin.estudokotlin.service.PurchaseService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
-@RestController("/purchase")
-@RequestMapping("purchase")
+@RestController("/purchases")
+@RequestMapping("purchases")
 class PurchaseController(
         private val purchaseService: PurchaseService,
         private val purchaseMapper: PurchaseMapper

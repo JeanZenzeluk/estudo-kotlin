@@ -3,7 +3,9 @@ package com.estudokotlin.estudokotlin.controller
 import com.estudokotlin.estudokotlin.controller.request.PostBookRequest
 import com.estudokotlin.estudokotlin.controller.request.PutBookRequest
 import com.estudokotlin.estudokotlin.controller.response.BookResponse
+import com.estudokotlin.estudokotlin.controller.response.PageResponse
 import com.estudokotlin.estudokotlin.extension.toBookModel
+import com.estudokotlin.estudokotlin.extension.toPageResponse
 import com.estudokotlin.estudokotlin.extension.toResponse
 import com.estudokotlin.estudokotlin.service.BookService
 import com.estudokotlin.estudokotlin.service.CustomerService
@@ -16,7 +18,7 @@ import javax.validation.Valid
 
 
 @RestController
-@RequestMapping("book")
+@RequestMapping("books")
 class BookController (
         val bookService: BookService,
         val customerService: CustomerService
@@ -31,8 +33,8 @@ class BookController (
     }
 
     @GetMapping
-    fun findAll(@PageableDefault(page = 0, size = 10) pageable: Pageable): Page<BookResponse> {
-        return bookService.findAll(pageable).map { it.toResponse() }
+    fun findAll(@PageableDefault(page = 0, size = 10) pageable: Pageable): PageResponse<BookResponse> {
+        return bookService.findAll(pageable).map { it.toResponse() }.toPageResponse()
     }
 
     @GetMapping("/active")

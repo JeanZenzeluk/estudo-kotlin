@@ -6,10 +6,12 @@ import com.estudokotlin.estudokotlin.controller.request.PutBookRequest
 import com.estudokotlin.estudokotlin.controller.request.PutCustomerRequest
 import com.estudokotlin.estudokotlin.controller.response.BookResponse
 import com.estudokotlin.estudokotlin.controller.response.CustomerResponse
+import com.estudokotlin.estudokotlin.controller.response.PageResponse
 import com.estudokotlin.estudokotlin.enums.BookStatus
 import com.estudokotlin.estudokotlin.enums.CustomerStatus
 import com.estudokotlin.estudokotlin.model.BookModel
 import com.estudokotlin.estudokotlin.model.CustomerModel
+import org.springframework.data.domain.Page
 
 fun PostCustomerRequest.toCustomerModel(): CustomerModel {
     return com.estudokotlin.estudokotlin.model.CustomerModel(name = this.name, email = this.email,
@@ -61,4 +63,11 @@ fun BookModel.toResponse(): BookResponse {
             customer = this.customer,
             status = this.status
     )
+}
+
+fun <T>Page<T>.toPageResponse(): PageResponse<T>{
+    return PageResponse(this.content,
+            this.number,
+            this.totalElements,
+            this.totalPages)
 }

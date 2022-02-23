@@ -4,6 +4,7 @@ import com.estudokotlin.estudokotlin.enums.Role
 import com.estudokotlin.estudokotlin.repository.CustomerRepository
 import com.estudokotlin.estudokotlin.security.AuthenticationFilter
 import com.estudokotlin.estudokotlin.security.AuthorizationFilter
+import com.estudokotlin.estudokotlin.security.CustomAuthenticationEntryPoint
 import com.estudokotlin.estudokotlin.service.JwtUtil
 import com.estudokotlin.estudokotlin.service.UserDetailsCustomService
 import org.springframework.context.annotation.Bean
@@ -27,19 +28,24 @@ import org.springframework.web.filter.CorsFilter
 class SecurityConfig(
         private val customerRepository: CustomerRepository,
         private val userDetails: UserDetailsCustomService,
-        private val jwtUtil: JwtUtil
+        private val jwtUtil: JwtUtil,
+        private val customEntryPoint: CustomAuthenticationEntryPoint
 ) : WebSecurityConfigurerAdapter() {
 
     private val PUBLIC_MATCHERS = arrayOf<String>(
             // colocar aqui as URL's totalmente publica
     )
 
-    private val PUBLIC_POST_MATCHES = arrayOf(
-        "/customer"
+    private val PUBLIC_POST_MATCHERS = arrayOf(
+        "/customers"
     )
 
     private val ADMIN_MATCHERS = arrayOf(
             "/admin/**"
+    )
+
+    private val PUBLIC_GET_MATCHERS = arrayOf(
+            "/books"
     )
 
     override fun configure(auth: AuthenticationManagerBuilder) {
@@ -50,12 +56,14 @@ class SecurityConfig(
         http.cors().and().csrf().disable()
         http.authorizeRequests()
                 .antMatchers(*PUBLIC_MATCHERS).permitAll()  // permite acesso sem autenticação
-                .antMatchers(HttpMethod.POST, *PUBLIC_POST_MATCHES).permitAll() // permite os POSTS de customer
+                .antMatchers(HttpMethod.POST, *PUBLIC_POST_MATCHERS).permitAll() // permite os POSTS de customer
                 .antMatchers(*ADMIN_MATCHERS).hasAuthority(Role.ADMIN.description)
+                .antMatchers(HttpMethod.GET, *PUBLIC_GET_MATCHERS).permitAll()
                 .anyRequest().authenticated()
         http.addFilter(AuthenticationFilter(authenticationManager(), customerRepository, jwtUtil))
         http.addFilter(AuthorizationFilter(authenticationManager(), userDetails, jwtUtil))
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        http.exceptionHandling().authenticationEntryPoint(customEntryPoint)
     }
 
     @Bean
@@ -63,7 +71,7 @@ class SecurityConfig(
         val source = UrlBasedCorsConfigurationSource()
         val config = CorsConfiguration()
         config.allowCredentials = true
-        config.addAllowedOrigin("*")
+        config.addAllowedOriginPattern("*")
         config.addAllowedHeader("*")
         config.addAllowedMethod("*")
         source.registerCorsConfiguration("/**", config)
